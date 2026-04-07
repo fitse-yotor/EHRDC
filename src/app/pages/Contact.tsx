@@ -36,12 +36,20 @@ export function Contact() {
                   <div>
                     <h4 className="mb-1">Main Office</h4>
                     <p className="text-sm text-muted-foreground">
-                      123 Justice Avenue
+                      Bole Road, Friendship Business Center
                       <br />
-                      Capital City, 12345
+                      5th floor, Office number 504/2
                       <br />
-                      Country
+                      Addis Ababa, Ethiopia
                     </p>
+                    <a
+                      href="https://maps.app.goo.gl/wfeAg9r45hr6eRPB8"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-2 inline-block text-sm text-primary hover:underline"
+                    >
+                      Open Office Location on Google Maps
+                    </a>
                   </div>
                 </div>
 
@@ -204,11 +212,21 @@ export function Contact() {
             {/* Map Placeholder */}
             <Card className="mt-6">
               <CardContent className="pt-6">
-                <div className="bg-muted rounded-lg h-64 flex items-center justify-center">
+                <div className="rounded-lg border border-primary/10 bg-muted p-6">
                   <div className="text-center text-muted-foreground">
-                    <MapPin className="h-12 w-12 mx-auto mb-2" />
-                    <p>Map Location</p>
-                    <p className="text-sm">123 Justice Avenue, Capital City</p>
+                    <MapPin className="mx-auto mb-2 h-12 w-12 text-primary" />
+                    <p className="mb-2 text-foreground">EHRDC Office Location</p>
+                    <p className="text-sm">
+                      Bole Road, Friendship Business Center, 5th Floor, Office 504/2
+                    </p>
+                    <a
+                      href="https://maps.app.goo.gl/wfeAg9r45hr6eRPB8"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-3 inline-block text-sm text-primary hover:underline"
+                    >
+                      View on Google Maps
+                    </a>
                   </div>
                 </div>
               </CardContent>

@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Calendar, MapPin } from "lucide-react";
+import { Link } from "react-router";
+import { Button } from "../components/ui/button";
 
 const newsItems = [
   {
@@ -100,6 +102,11 @@ export function News() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">{item.excerpt}</p>
+                <Link to={`/news/${item.id}`} className="mt-4 inline-block">
+                  <Button variant="outline" size="sm">
+                    Read More
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           ))}

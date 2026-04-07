@@ -12,6 +12,7 @@ import {
   FileText,
 } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import logo from "../../../assets/logo.png";
 
 export function Home() {
   return (
@@ -270,6 +271,38 @@ export function Home() {
                       Read More →
                     </Button>
                   </Link>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Partnerships */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-10">
+            <h2 className="text-4xl mb-3">Our Partnerships</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              We collaborate with local and international partners to strengthen protection,
+              advocacy, and capacity building for human rights defenders.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {[
+              "Consortium for Ethiopian Human Rights Organizations (CEHRO)",
+              "Ethiopian Women Lawyers Association (EWLA)",
+              "Ethiopian Human Rights Council (EHRCO)",
+              "Advocates Ethiopia",
+            ].map((partner) => (
+              <Card key={partner} className="border-primary/10 shadow-sm">
+                <CardContent className="pt-6 text-center">
+                  <img
+                    src={logo}
+                    alt={`${partner} logo`}
+                    className="mx-auto mb-4 h-16 w-16 rounded-full border object-cover"
+                  />
+                  <h3 className="text-sm">{partner}</h3>
                 </CardContent>
               </Card>
             ))}

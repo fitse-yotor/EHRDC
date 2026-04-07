@@ -44,7 +44,7 @@ export function CapacityBuilding() {
                 />
                 <h3 className="text-lg mb-2">{training.title}</h3>
                 <p className="mb-4 text-sm text-muted-foreground">{training.summary}</p>
-                <Link to="/capacity-building">
+                <Link to={`/capacity-building/${training.id}`}>
                   <Button variant="outline" size="sm">
                     Read More
                   </Button>

@@ -118,17 +118,18 @@ export function Publications() {
   ];
 
   return (
+    <div className="bg-muted/30">
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl mb-4">Publications Library</h1>
+        <div className="mb-8 rounded-2xl border border-primary/10 bg-gradient-to-r from-primary/10 to-secondary/10 p-8 shadow-sm">
+          <h1 className="text-4xl mb-3">Publications Library</h1>
           <p className="text-muted-foreground text-lg">
-            Access our reports, research papers, and educational materials
+            Access reports, research papers, and educational materials from EHRDC.
           </p>
         </div>
 
         {/* Filters */}
-        <Card className="mb-8">
+        <Card className="mb-8 border-primary/10 shadow-sm">
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="relative">
@@ -169,10 +170,10 @@ export function Publications() {
         {/* Publications Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredPublications.map((pub) => (
-            <Card key={pub.id} className="hover:shadow-lg transition-shadow">
+            <Card key={pub.id} className="border-primary/10 hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-start justify-between gap-4 mb-2">
-                  <Badge variant="outline">{pub.category}</Badge>
+                  <Badge className="bg-primary/10 text-primary hover:bg-primary/10">{pub.category}</Badge>
                   <span className="text-sm text-muted-foreground">{pub.year}</span>
                 </div>
                 <CardTitle className="text-xl">{pub.title}</CardTitle>
@@ -193,11 +194,11 @@ export function Publications() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button className="bg-primary hover:bg-primary/90 flex-1">
+                  <Button className="bg-primary hover:bg-primary/90 flex-1 text-white">
                     <Download className="mr-2 h-4 w-4" />
                     Download PDF
                   </Button>
-                  <Button variant="outline">View Online</Button>
+                  <Button variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-white">View Online</Button>
                 </div>
               </CardContent>
             </Card>
@@ -214,6 +215,7 @@ export function Publications() {
           </Card>
         )}
       </div>
+    </div>
     </div>
   );
 }

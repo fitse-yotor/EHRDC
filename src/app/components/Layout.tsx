@@ -1,6 +1,6 @@
 import { Outlet, Link, useLocation } from "react-router";
 import { Button } from "./ui/button";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useState } from "react";
 import {
   Sheet,
@@ -28,18 +28,18 @@ export function Layout() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-white shadow-sm">
+      <header className="sticky top-0 z-[1200] w-full border-b bg-white shadow-sm">
         <div className="container mx-auto px-4">
-          <div className="flex h-16 items-center justify-between">
+          <div className="flex h-20 items-center justify-between">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2">
-              <img src={logo} alt="EHRDC logo" className="h-10 w-10 rounded-full border object-cover" />
-              <span className="text-xl text-foreground">Human Rights Commission</span>
+              <img src={logo} alt="EHRDC logo" className="h-14 w-14 rounded-full border object-cover" />
+              <span className="text-xl text-foreground">EHRDC</span>
             </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-1">
-              <NavigationMenu>
+              <NavigationMenu viewport={false}>
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <Link to="/">
@@ -59,7 +59,7 @@ export function Layout() {
                     <NavigationMenuTrigger className="text-foreground">
                       About EHRDC
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent>
+                    <NavigationMenuContent className="z-[120]">
                       <ul className="grid w-[260px] gap-1 p-2">
                         <li>
                           <Link to="/about">
@@ -143,9 +143,40 @@ export function Layout() {
 
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-foreground">
+                      Publication
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent className="z-[120]">
+                      <ul className="grid w-[220px] gap-1 p-2">
+                        <li>
+                          <Link to="/research-papers">
+                            <NavigationMenuLink className="block px-4 py-2 rounded-md hover:bg-muted">
+                              Research Papers
+                            </NavigationMenuLink>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/statistics">
+                            <NavigationMenuLink className="block px-4 py-2 rounded-md hover:bg-muted">
+                              Statistics
+                            </NavigationMenuLink>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/annual-reports">
+                            <NavigationMenuLink className="block px-4 py-2 rounded-md hover:bg-muted">
+                              Annual Reports
+                            </NavigationMenuLink>
+                          </Link>
+                        </li>
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-foreground">
                       Resources
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent>
+                    <NavigationMenuContent className="z-[120]">
                       <ul className="grid w-[200px] gap-1 p-2">
                         <li>
                           <Link to="/news">
@@ -239,34 +270,34 @@ export function Layout() {
                 <SheetHeader>
                   <SheetTitle>Menu</SheetTitle>
                 </SheetHeader>
-                <nav className="flex flex-col gap-4 mt-8">
+                <nav className="mt-8 space-y-5">
                   <Link
                     to="/"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg hover:text-primary transition-colors"
+                    className="block text-lg hover:text-primary transition-colors"
                   >
                     Home
                   </Link>
-                  <div className="pt-1">
-                    <p className="text-base font-semibold text-foreground">About EHRDC</p>
+                  <div className="rounded-lg border bg-muted/30 p-3">
+                    <p className="mb-2 text-base font-semibold text-foreground">About EHRDC</p>
                     <Link
                       to="/about"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="mt-2 block text-lg hover:text-primary transition-colors"
+                      className="block py-1 text-base hover:text-primary transition-colors"
                     >
                       About Us
                     </Link>
                     <Link
                       to="/impact"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block text-lg hover:text-primary transition-colors"
+                      className="block py-1 text-base hover:text-primary transition-colors"
                     >
                       Impact Dashboard
                     </Link>
                     <Link
                       to="/press-kit"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block text-lg hover:text-primary transition-colors"
+                      className="block py-1 text-base hover:text-primary transition-colors"
                     >
                       Press Kit
                     </Link>
@@ -276,14 +307,14 @@ export function Layout() {
                     <Link
                       to="/board-members"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block text-base text-foreground/80 hover:text-primary transition-colors"
+                      className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors"
                     >
                       Board Members
                     </Link>
                     <Link
                       to="/staff"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block text-base text-foreground/80 hover:text-primary transition-colors"
+                      className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors"
                     >
                       Staff
                     </Link>
@@ -293,81 +324,45 @@ export function Layout() {
                     <Link
                       to="/capacity-building"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block text-base text-foreground/80 hover:text-primary transition-colors"
+                      className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors"
                     >
                       Capacity Building
                     </Link>
                     <Link
                       to="/advocacy"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block text-base text-foreground/80 hover:text-primary transition-colors"
+                      className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors"
                     >
                       Advocacy
                     </Link>
                     <Link
                       to="/protection"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block text-base text-foreground/80 hover:text-primary transition-colors"
+                      className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors"
                     >
                       Protection
                     </Link>
                   </div>
-                  <Link
-                    to="/campaigns"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg hover:text-primary transition-colors"
-                  >
-                    Campaigns
-                  </Link>
-                  <Link
-                    to="/news"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg hover:text-primary transition-colors"
-                  >
-                    News & Updates
-                  </Link>
-                  <Link
-                    to="/events"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg hover:text-primary transition-colors"
-                  >
-                    Events
-                  </Link>
-                  <Link
-                    to="/violence-reporting-map"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg hover:text-primary transition-colors"
-                  >
-                    Reports Map
-                  </Link>
-                  <Link
-                    to="/publications"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg hover:text-primary transition-colors"
-                  >
-                    Publications
-                  </Link>
-                  <Link
-                    to="/blog"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg hover:text-primary transition-colors"
-                  >
-                    Blog & Stories
-                  </Link>
-                  <Link
-                    to="/gallery"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg hover:text-primary transition-colors"
-                  >
-                    Gallery
-                  </Link>
-                  <Link
-                    to="/jobs"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg hover:text-primary transition-colors"
-                  >
-                    Jobs
-                  </Link>
+                  <div className="rounded-lg border bg-muted/30 p-3">
+                    <p className="mb-2 text-base font-semibold text-foreground">Programs</p>
+                    <Link to="/campaigns" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Campaigns</Link>
+                    <Link to="/events" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Events</Link>
+                    <Link to="/violence-reporting-map" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Reports Map</Link>
+                    <Link to="/gallery" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Gallery</Link>
+                    <Link to="/jobs" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Jobs</Link>
+                  </div>
+                  <div className="rounded-lg border bg-muted/30 p-3">
+                    <p className="mb-2 text-base font-semibold text-foreground">Publication</p>
+                    <Link to="/publications" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Publications Library</Link>
+                    <Link to="/research-papers" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors">Research Papers</Link>
+                    <Link to="/statistics" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors">Statistics</Link>
+                    <Link to="/annual-reports" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors">Annual Reports</Link>
+                  </div>
+                  <div className="rounded-lg border bg-muted/30 p-3">
+                    <p className="mb-2 text-base font-semibold text-foreground">Resources</p>
+                    <Link to="/news" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">News & Updates</Link>
+                    <Link to="/blog" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Blog & Stories</Link>
+                  </div>
                   <div className="flex flex-col gap-2 mt-4 pt-4 border-t">
                     <Link to="/join" onClick={() => setMobileMenuOpen(false)}>
                       <Button variant="outline" className="w-full border-secondary text-secondary">
@@ -487,7 +482,7 @@ export function Layout() {
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="px-4 py-2 rounded-md text-foreground"
+                  className="rounded-md border border-white/30 bg-white px-4 py-2 text-foreground placeholder:text-gray-500"
                 />
                 <Button className="bg-primary hover:bg-primary/90">
                   Subscribe
@@ -497,7 +492,7 @@ export function Layout() {
           </div>
 
           <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
-            <p>&copy; 2026 Human Rights Commission. All rights reserved.</p>
+            <p>&copy; 2026 EHRDC. All rights reserved.</p>
           </div>
         </div>
       </footer>

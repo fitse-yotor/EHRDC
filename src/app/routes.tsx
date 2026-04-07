@@ -18,11 +18,17 @@ import { PressKit } from "./pages/PressKit";
 import { Contact } from "./pages/Contact";
 import { NotFound } from "./pages/NotFound";
 import { ViolenceReportingMap } from "./pages/ViolenceReportingMap";
+import { ViolenceReportDetail } from "./pages/ViolenceReportDetail";
 import { BoardMembers } from "./pages/BoardMembers";
 import { Staff } from "./pages/Staff";
 import { CapacityBuilding } from "./pages/CapacityBuilding";
+import { CapacityBuildingDetail } from "./pages/CapacityBuildingDetail";
 import { Advocacy } from "./pages/Advocacy";
 import { Protection } from "./pages/Protection";
+import { NewsDetail } from "./pages/NewsDetail";
+import { ResearchPapers } from "./pages/ResearchPapers";
+import { StatisticsPage } from "./pages/StatisticsPage";
+import { AnnualReports } from "./pages/AnnualReports";
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +37,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, Component: Home },
       { path: "news", Component: News },
+      { path: "news/:id", Component: NewsDetail },
       { path: "events", Component: Events },
       { path: "publications", Component: Publications },
       { path: "join", Component: Membership },
@@ -46,11 +53,16 @@ export const router = createBrowserRouter([
       { path: "press-kit", Component: PressKit },
       { path: "contact", Component: Contact },
       { path: "violence-reporting-map", Component: ViolenceReportingMap },
+      { path: "violence-reporting-map/:id", Component: ViolenceReportDetail },
       { path: "board-members", Component: BoardMembers },
       { path: "staff", Component: Staff },
       { path: "capacity-building", Component: CapacityBuilding },
+      { path: "capacity-building/:id", Component: CapacityBuildingDetail },
       { path: "advocacy", Component: Advocacy },
       { path: "protection", Component: Protection },
+      { path: "research-papers", Component: ResearchPapers },
+      { path: "statistics", Component: StatisticsPage },
+      { path: "annual-reports", Component: AnnualReports },
       { path: "*", Component: NotFound },
     ],
   },

@@ -8,64 +8,7 @@ import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../components/ui/dialog";
 import { toast } from "sonner";
-import logo from "../../../assets/logo.png";
-
-type ReportStatus = "urgent" | "verified" | "review";
-
-type ReportItem = {
-  id: number;
-  title: string;
-  description: string;
-  latitude: number;
-  longitude: number;
-  location: string;
-  date: string;
-  status: ReportStatus;
-  caseId?: string;
-};
-
-const MOCK_REPORTS: ReportItem[] = [
-  {
-    id: 1,
-    title: "Unlawful Detention of Journalist",
-    description: "A journalist was detained without a warrant while reporting on a protest.",
-    latitude: 9.03,
-    longitude: 38.74,
-    location: "Addis Ababa",
-    date: "2026-03-12",
-    status: "urgent",
-  },
-  {
-    id: 2,
-    title: "Use of Excessive Force",
-    description: "Security forces used excessive force during a peaceful demonstration.",
-    latitude: 11.6,
-    longitude: 37.39,
-    location: "Bahir Dar",
-    date: "2026-02-25",
-    status: "verified",
-  },
-  {
-    id: 3,
-    title: "Forced Eviction Case",
-    description: "Residents were evicted without prior notice or compensation.",
-    latitude: 7.67,
-    longitude: 36.83,
-    location: "Jimma",
-    date: "2026-01-18",
-    status: "review",
-  },
-  {
-    id: 4,
-    title: "Violation of Freedom of Speech",
-    description: "Individual arrested for expressing political views online.",
-    latitude: 13.5,
-    longitude: 39.47,
-    location: "Mekelle",
-    date: "2026-03-01",
-    status: "urgent",
-  },
-];
+import { ReportItem, ReportStatus, violenceReports } from "../data/violenceReports";
 
 const STATUS_STYLES: Record<ReportStatus, string> = {
   urgent: "bg-[#C62828] text-white",
@@ -120,19 +63,12 @@ function MapClickCapture({
 
 export function ViolenceReportingMap() {
   const [loading, setLoading] = useState(true);
-  const [reports, setReports] = useState<ReportItem[]>(
-    MOCK_REPORTS.map((item, index) => ({
-      ...item,
-      caseId: `EHRDC-2026-${String(index + 1).padStart(4, "0")}`,
-    })),
-  );
+  const [reports, setReports] = useState<ReportItem[]>(violenceReports);
   const [selectedStatus, setSelectedStatus] = useState<"all" | ReportStatus>("all");
   const [selectedRegion, setSelectedRegion] = useState("all");
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [detailModalOpen, setDetailModalOpen] = useState(false);
-  const [detailItem, setDetailItem] = useState<ReportItem | null>(null);
   const [pickedCoords, setPickedCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [formData, setFormData] = useState({
     title: "",
@@ -197,28 +133,6 @@ export function ViolenceReportingMap() {
 
   return (
     <div className="min-h-screen bg-[#F5F7FA] text-gray-900">
-      <div className="border-b bg-white shadow-sm">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <Link to="/" className="flex items-center gap-3">
-            <img src={logo} alt="EHRDC logo" className="h-11 w-11 rounded-full border bg-white object-cover" />
-            <div>
-              <p className="text-sm font-semibold tracking-wide">EHRDC</p>
-              <p className="text-xs text-gray-500">Violence Reporting Map</p>
-            </div>
-          </Link>
-          <nav className="hidden gap-5 text-sm md:flex">
-            <Link to="/" className="hover:text-[#C62828]">Home</Link>
-            <Link to="/violence-reporting-map" className="text-[#C62828]">Reports</Link>
-            <Link to="/events" className="hover:text-[#C62828]">Events</Link>
-            <Link to="/join" className="hover:text-[#C62828]">Join Us</Link>
-            <Link to="/contact" className="hover:text-[#C62828]">Contact</Link>
-          </nav>
-          <Button className="bg-[#C62828] hover:bg-[#B71C1C]" onClick={() => setModalOpen(true)}>
-            Report a Violation
-          </Button>
-        </div>
-      </div>
-
       <section className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4">
         <Card className="rounded-xl border bg-white p-4 shadow-sm">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -322,13 +236,10 @@ export function ViolenceReportingMap() {
                         <p className="text-xs"><strong>Date:</strong> {item.date}</p>
                         <Button
                           size="sm"
-                          className="mt-2 w-full bg-[#1976D2] hover:bg-[#1565C0]"
-                          onClick={() => {
-                            setDetailItem(item);
-                            setDetailModalOpen(true);
-                          }}
+                          asChild
+                          className="mt-2 w-full bg-[#1976D2] !text-black hover:bg-[#1565C0] [&_a]:!text-black"
                         >
-                          View Details
+                          <Link to={`/violence-reporting-map/${item.id}`}>View Details</Link>
                         </Button>
                       </div>
                     </Popup>
@@ -428,33 +339,6 @@ export function ViolenceReportingMap() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={detailModalOpen} onOpenChange={setDetailModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{detailItem?.title}</DialogTitle>
-            <DialogDescription>{detailItem?.caseId}</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-2 text-sm">
-            <p><strong>Description:</strong> {detailItem?.description}</p>
-            <p><strong>Location:</strong> {detailItem?.location}</p>
-            <p><strong>Date:</strong> {detailItem?.date}</p>
-            <p>
-              <strong>Status:</strong>{" "}
-              {detailItem && <Badge className={STATUS_STYLES[detailItem.status]}>{STATUS_LABELS[detailItem.status]}</Badge>}
-            </p>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      <footer className="mt-8 border-t bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-6">
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="EHRDC logo" className="h-10 w-10 rounded-full border object-cover" />
-            <p className="text-sm text-gray-600">EHRDC Violence Reporting Map</p>
-          </div>
-          <p className="text-xs text-gray-500">No backend mode enabled (MVP mock data)</p>
-        </div>
-      </footer>
     </div>
   );
 }
