@@ -13,8 +13,11 @@ import {
 } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import logo from "../../../assets/logo.png";
+import { useLanguage } from "../context/LanguageContext";
 
 export function Home() {
+  const { t } = useLanguage();
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -26,28 +29,21 @@ export function Home() {
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="container mx-auto px-4 z-20 text-center text-white">
-          <h1 className="text-5xl md:text-6xl mb-6 text-white">
-            Defending Human Rights for All
-          </h1>
+          <h1 className="text-5xl md:text-6xl mb-6 text-white">{t("hero.title")}</h1>
           <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-white">
-            We stand for justice, equality, and dignity. Together, we can create a world
-            where every person's rights are protected and respected.
+            {t("hero.subtitle")}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/report-case">
               <Button size="lg" className="bg-primary hover:bg-primary/90">
                 <AlertCircle className="mr-2 h-5 w-5" />
-                Report a Case
+                {t("hero.reportCase")}
               </Button>
             </Link>
             <Link to="/join">
-              <Button
-                size="lg"
-                variant="outline"
-                className="bg-white text-foreground hover:bg-white/90"
-              >
+              <Button size="lg" variant="outline" className="bg-white text-foreground hover:bg-white/90">
                 <Users className="mr-2 h-5 w-5" />
-                Join the Movement
+                {t("hero.joinMovement")}
               </Button>
             </Link>
           </div>
@@ -61,12 +57,12 @@ export function Home() {
             <div className="flex items-center gap-3">
               <AlertCircle className="h-6 w-6" />
               <span className="text-white">
-                <strong>URGENT:</strong> Join our campaign to protect freedom of expression
+                <strong>URGENT:</strong> {t("urgent.text")}
               </span>
             </div>
             <Link to="/campaigns">
               <Button variant="outline" className="bg-white text-primary hover:bg-white/90 border-white">
-                Learn More
+                {t("urgent.learnMore")}
               </Button>
             </Link>
           </div>
@@ -80,25 +76,25 @@ export function Home() {
             <Card className="text-center">
               <CardContent className="pt-6">
                 <div className="text-4xl text-primary mb-2">2,500+</div>
-                <div className="text-muted-foreground">Cases Handled</div>
+                <div className="text-muted-foreground">{t("stats.casesHandled")}</div>
               </CardContent>
             </Card>
             <Card className="text-center">
               <CardContent className="pt-6">
                 <div className="text-4xl text-secondary mb-2">15,000+</div>
-                <div className="text-muted-foreground">People Supported</div>
+                <div className="text-muted-foreground">{t("stats.peopleSupported")}</div>
               </CardContent>
             </Card>
             <Card className="text-center">
               <CardContent className="pt-6">
                 <div className="text-4xl text-primary mb-2">12</div>
-                <div className="text-muted-foreground">Regions Covered</div>
+                <div className="text-muted-foreground">{t("stats.regionsCovered")}</div>
               </CardContent>
             </Card>
             <Card className="text-center">
               <CardContent className="pt-6">
                 <div className="text-4xl text-secondary mb-2">50+</div>
-                <div className="text-muted-foreground">Active Campaigns</div>
+                <div className="text-muted-foreground">{t("stats.activeCampaigns")}</div>
               </CardContent>
             </Card>
           </div>
@@ -109,28 +105,20 @@ export function Home() {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl mb-4">How We Work</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Our comprehensive approach to defending and promoting human rights across all
-              communities
-            </p>
+            <h2 className="text-4xl mb-4">{t("howWeWork.title")}</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">{t("howWeWork.subtitle")}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <Card>
               <CardHeader>
                 <Shield className="h-12 w-12 text-primary mb-4" />
-                <CardTitle>Case Advocacy</CardTitle>
+                <CardTitle>{t("howWeWork.caseAdvocacy")}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  We provide legal support and advocacy for victims of human rights
-                  violations, ensuring justice is served.
-                </p>
+                <p className="text-muted-foreground mb-4">{t("howWeWork.caseAdvocacyDesc")}</p>
                 <Link to="/report-case">
-                  <Button variant="link" className="p-0 text-primary">
-                    Report a Case →
-                  </Button>
+                  <Button variant="link" className="p-0 text-primary">{t("link.reportCase")}</Button>
                 </Link>
               </CardContent>
             </Card>
@@ -138,17 +126,12 @@ export function Home() {
             <Card>
               <CardHeader>
                 <Users className="h-12 w-12 text-secondary mb-4" />
-                <CardTitle>Community Engagement</CardTitle>
+                <CardTitle>{t("howWeWork.communityEngagement")}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  Building strong communities through education, training, and
-                  collaborative initiatives.
-                </p>
+                <p className="text-muted-foreground mb-4">{t("howWeWork.communityEngagementDesc")}</p>
                 <Link to="/events">
-                  <Button variant="link" className="p-0 text-secondary">
-                    View Events →
-                  </Button>
+                  <Button variant="link" className="p-0 text-secondary">{t("link.viewEvents")}</Button>
                 </Link>
               </CardContent>
             </Card>
@@ -156,17 +139,12 @@ export function Home() {
             <Card>
               <CardHeader>
                 <BookOpen className="h-12 w-12 text-primary mb-4" />
-                <CardTitle>Research & Publications</CardTitle>
+                <CardTitle>{t("howWeWork.research")}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  Comprehensive reports and research on human rights issues to inform
-                  policy and public discourse.
-                </p>
+                <p className="text-muted-foreground mb-4">{t("howWeWork.researchDesc")}</p>
                 <Link to="/publications">
-                  <Button variant="link" className="p-0 text-primary">
-                    View Publications →
-                  </Button>
+                  <Button variant="link" className="p-0 text-primary">{t("link.viewPublications")}</Button>
                 </Link>
               </CardContent>
             </Card>
@@ -174,17 +152,12 @@ export function Home() {
             <Card>
               <CardHeader>
                 <Heart className="h-12 w-12 text-secondary mb-4" />
-                <CardTitle>Campaigns</CardTitle>
+                <CardTitle>{t("howWeWork.campaigns")}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  Powerful advocacy campaigns driving real change in laws, policies, and
-                  public attitudes.
-                </p>
+                <p className="text-muted-foreground mb-4">{t("howWeWork.campaignsDesc")}</p>
                 <Link to="/campaigns">
-                  <Button variant="link" className="p-0 text-secondary">
-                    Active Campaigns →
-                  </Button>
+                  <Button variant="link" className="p-0 text-secondary">{t("link.activeCampaigns")}</Button>
                 </Link>
               </CardContent>
             </Card>
@@ -192,17 +165,12 @@ export function Home() {
             <Card>
               <CardHeader>
                 <TrendingUp className="h-12 w-12 text-primary mb-4" />
-                <CardTitle>Impact Tracking</CardTitle>
+                <CardTitle>{t("howWeWork.impactTracking")}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  Transparent reporting on our achievements and the real-world impact of
-                  our work.
-                </p>
+                <p className="text-muted-foreground mb-4">{t("howWeWork.impactTrackingDesc")}</p>
                 <Link to="/impact">
-                  <Button variant="link" className="p-0 text-primary">
-                    View Impact →
-                  </Button>
+                  <Button variant="link" className="p-0 text-primary">{t("link.viewImpact")}</Button>
                 </Link>
               </CardContent>
             </Card>
@@ -210,17 +178,12 @@ export function Home() {
             <Card>
               <CardHeader>
                 <FileText className="h-12 w-12 text-secondary mb-4" />
-                <CardTitle>Policy Advocacy</CardTitle>
+                <CardTitle>{t("howWeWork.policyAdvocacy")}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  Working with governments and institutions to create and strengthen
-                  human rights protections.
-                </p>
+                <p className="text-muted-foreground mb-4">{t("howWeWork.policyAdvocacyDesc")}</p>
                 <Link to="/about">
-                  <Button variant="link" className="p-0 text-secondary">
-                    Learn More →
-                  </Button>
+                  <Button variant="link" className="p-0 text-secondary">{t("link.learnMore")}</Button>
                 </Link>
               </CardContent>
             </Card>
@@ -232,9 +195,9 @@ export function Home() {
       <section className="py-16 bg-muted">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
-            <h2 className="text-4xl">Latest News</h2>
+            <h2 className="text-4xl">{t("news.title")}</h2>
             <Link to="/news">
-              <Button variant="outline">View All News</Button>
+              <Button variant="outline">{t("news.viewAll")}</Button>
             </Link>
           </div>
 
@@ -243,20 +206,17 @@ export function Home() {
               {
                 title: "New Report: State of Human Rights 2026",
                 date: "April 5, 2026",
-                excerpt:
-                  "Our comprehensive annual report highlights progress and challenges in human rights protection...",
+                excerpt: "Our comprehensive annual report highlights progress and challenges in human rights protection...",
               },
               {
                 title: "Campaign Victory: Education Access Expanded",
                 date: "April 3, 2026",
-                excerpt:
-                  "After 6 months of advocacy, new legislation ensures education access for all children...",
+                excerpt: "After 6 months of advocacy, new legislation ensures education access for all children...",
               },
               {
                 title: "Upcoming: Regional Human Rights Summit",
                 date: "April 1, 2026",
-                excerpt:
-                  "Join us for a three-day summit bringing together activists, policymakers, and communities...",
+                excerpt: "Join us for a three-day summit bringing together activists, policymakers, and communities...",
               },
             ].map((news, index) => (
               <Card key={index}>
@@ -267,9 +227,7 @@ export function Home() {
                 <CardContent>
                   <p className="text-muted-foreground mb-4">{news.excerpt}</p>
                   <Link to="/news">
-                    <Button variant="link" className="p-0 text-primary">
-                      Read More →
-                    </Button>
+                    <Button variant="link" className="p-0 text-primary">{t("news.readMore")}</Button>
                   </Link>
                 </CardContent>
               </Card>
@@ -282,11 +240,8 @@ export function Home() {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
-            <h2 className="text-4xl mb-3">Our Partnerships</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              We collaborate with local and international partners to strengthen protection,
-              advocacy, and capacity building for human rights defenders.
-            </p>
+            <h2 className="text-4xl mb-3">{t("partnerships.title")}</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">{t("partnerships.subtitle")}</p>
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {[
@@ -297,11 +252,7 @@ export function Home() {
             ].map((partner) => (
               <Card key={partner} className="border-primary/10 shadow-sm">
                 <CardContent className="pt-6 text-center">
-                  <img
-                    src={logo}
-                    alt={`${partner} logo`}
-                    className="mx-auto mb-4 h-16 w-16 rounded-full border object-cover"
-                  />
+                  <img src={logo} alt={`${partner} logo`} className="mx-auto mb-4 h-16 w-16 rounded-full border object-cover" />
                   <h3 className="text-sm">{partner}</h3>
                 </CardContent>
               </Card>
@@ -313,28 +264,17 @@ export function Home() {
       {/* Call to Action */}
       <section className="py-16 bg-primary text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl mb-6 text-white">Be Part of the Change</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto text-white">
-            Your support helps us continue our vital work protecting human rights and
-            fighting injustice. Join us today.
-          </p>
+          <h2 className="text-4xl mb-6 text-white">{t("cta.title")}</h2>
+          <p className="text-xl mb-8 max-w-2xl mx-auto text-white">{t("cta.subtitle")}</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/join">
-              <Button
-                size="lg"
-                variant="outline"
-                className="bg-white text-primary hover:bg-white/90 border-white"
-              >
-                Become a Member
+              <Button size="lg" variant="outline" className="bg-white text-primary hover:bg-white/90 border-white">
+                {t("cta.becomeMember")}
               </Button>
             </Link>
             <Link to="/campaigns">
-              <Button
-                size="lg"
-                variant="outline"
-                className="bg-transparent text-white hover:bg-white/10 border-white"
-              >
-                Support a Campaign
+              <Button size="lg" variant="outline" className="bg-transparent text-white hover:bg-white/10 border-white">
+                {t("cta.supportCampaign")}
               </Button>
             </Link>
           </div>
