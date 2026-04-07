@@ -1,92 +1,504 @@
-import { Link, Outlet, useLocation } from "react-router";
-import { Menu } from "lucide-react";
-import { useState } from "react";
+import { Outlet, Link, useLocation } from "react-router";
 import { Button } from "./ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { Menu, X, ChevronDown } from "lucide-react";
+import { useState } from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "./ui/navigation-menu";
+import logo from "../../../assets/logo.png";
 
 export function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const isActive = (path: string) => location.pathname === path || (path !== "/" && location.pathname.startsWith(path));
-  const navItems = [
-    { label: "Home", to: "/" },
-    { label: "About Us", to: "/about" },
-    { label: "Reports", to: "/report-case" },
-    { label: "Events", to: "/events" },
-    { label: "Join Us", to: "/join" },
-    { label: "Contact", to: "/contact" },
-  ];
+
+  const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      <header className="sticky top-0 z-50 border-b bg-white/95 backdrop-blur">
-        <div className="mx-auto flex h-16 w-full max-w-[1400px] items-center justify-between px-4 md:px-6">
-          <Link to="/" className="flex items-center gap-3">
-            <img src="/assets/logo.png" alt="EHRDC" className="h-10 w-10 rounded-full object-cover" />
-            <div>
-              <p className="text-sm font-semibold tracking-wide text-primary">EHRDC</p>
-              <p className="text-xs text-muted-foreground">Ethiopian Human Rights Defenders Center</p>
-            </div>
-          </Link>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="sticky top-0 z-50 w-full border-b bg-white shadow-sm">
+        <div className="container mx-auto px-4">
+          <div className="flex h-16 items-center justify-between">
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-2">
+              <img src={logo} alt="EHRDC logo" className="h-10 w-10 rounded-full border object-cover" />
+              <span className="text-xl text-foreground">Human Rights Commission</span>
+            </Link>
 
-          <nav className="hidden items-center gap-1 md:flex">
-            {navItems.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={`rounded-md px-4 py-2 text-sm transition-colors ${
-                  isActive(item.to) ? "bg-primary/10 text-primary" : "text-foreground hover:bg-muted"
-                }`}
-              >
-                {item.label}
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex items-center gap-1">
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <Link to="/">
+                      <NavigationMenuLink
+                        className={`px-4 py-2 rounded-md transition-colors ${
+                          isActive("/")
+                            ? "bg-primary/10 text-primary"
+                            : "text-foreground hover:bg-muted"
+                        }`}
+                      >
+                        Home
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
+
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-foreground">
+                      About EHRDC
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[260px] gap-1 p-2">
+                        <li>
+                          <Link to="/about">
+                            <NavigationMenuLink className="block px-4 py-2 rounded-md hover:bg-muted">
+                              About Us
+                            </NavigationMenuLink>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/impact">
+                            <NavigationMenuLink className="block px-4 py-2 rounded-md hover:bg-muted">
+                              Impact Dashboard
+                            </NavigationMenuLink>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/press-kit">
+                            <NavigationMenuLink className="block px-4 py-2 rounded-md hover:bg-muted">
+                              Press Kit
+                            </NavigationMenuLink>
+                          </Link>
+                        </li>
+                        <li className="px-4 pt-2 pb-1 text-xs font-semibold text-muted-foreground">
+                          Who We Are
+                        </li>
+                        <li>
+                          <Link to="/board-members">
+                            <NavigationMenuLink className="block px-6 py-2 rounded-md text-sm text-foreground/80 hover:bg-muted">
+                              Board Members
+                            </NavigationMenuLink>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/staff">
+                            <NavigationMenuLink className="block px-6 py-2 rounded-md text-sm text-foreground/80 hover:bg-muted">
+                              Staff
+                            </NavigationMenuLink>
+                          </Link>
+                        </li>
+                        <li className="px-4 pt-2 pb-1 text-xs font-semibold text-muted-foreground">
+                          What We Do
+                        </li>
+                        <li>
+                          <Link to="/capacity-building">
+                            <NavigationMenuLink className="block px-6 py-2 rounded-md text-sm text-foreground/80 hover:bg-muted">
+                              Capacity Building
+                            </NavigationMenuLink>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/advocacy">
+                            <NavigationMenuLink className="block px-6 py-2 rounded-md text-sm text-foreground/80 hover:bg-muted">
+                              Advocacy
+                            </NavigationMenuLink>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/protection">
+                            <NavigationMenuLink className="block px-6 py-2 rounded-md text-sm text-foreground/80 hover:bg-muted">
+                              Protection
+                            </NavigationMenuLink>
+                          </Link>
+                        </li>
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+
+                  <NavigationMenuItem>
+                    <Link to="/campaigns">
+                      <NavigationMenuLink
+                        className={`px-4 py-2 rounded-md transition-colors ${
+                          isActive("/campaigns")
+                            ? "bg-primary/10 text-primary"
+                            : "text-foreground hover:bg-muted"
+                        }`}
+                      >
+                        Campaigns
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
+
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-foreground">
+                      Resources
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[200px] gap-1 p-2">
+                        <li>
+                          <Link to="/news">
+                            <NavigationMenuLink className="block px-4 py-2 rounded-md hover:bg-muted">
+                              News & Updates
+                            </NavigationMenuLink>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/events">
+                            <NavigationMenuLink className="block px-4 py-2 rounded-md hover:bg-muted">
+                              Events
+                            </NavigationMenuLink>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/publications">
+                            <NavigationMenuLink className="block px-4 py-2 rounded-md hover:bg-muted">
+                              Publications
+                            </NavigationMenuLink>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/blog">
+                            <NavigationMenuLink className="block px-4 py-2 rounded-md hover:bg-muted">
+                              Blog & Stories
+                            </NavigationMenuLink>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/violence-reporting-map">
+                            <NavigationMenuLink className="block px-4 py-2 rounded-md hover:bg-muted">
+                              Reports Map
+                            </NavigationMenuLink>
+                          </Link>
+                        </li>
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+
+                  <NavigationMenuItem>
+                    <Link to="/gallery">
+                      <NavigationMenuLink
+                        className={`px-4 py-2 rounded-md transition-colors ${
+                          isActive("/gallery")
+                            ? "bg-primary/10 text-primary"
+                            : "text-foreground hover:bg-muted"
+                        }`}
+                      >
+                        Gallery
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
+
+                  <NavigationMenuItem>
+                    <Link to="/jobs">
+                      <NavigationMenuLink
+                        className={`px-4 py-2 rounded-md transition-colors ${
+                          isActive("/jobs")
+                            ? "bg-primary/10 text-primary"
+                            : "text-foreground hover:bg-muted"
+                        }`}
+                      >
+                        Jobs
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+
+              <Link to="/join" className="ml-4">
+                <Button variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-white">
+                  Join Us
+                </Button>
               </Link>
-            ))}
-          </nav>
+              <Link to="/report-case">
+                <Button className="bg-primary hover:bg-primary/90">
+                  Report Case
+                </Button>
+              </Link>
+            </nav>
 
-          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-            <SheetTrigger asChild className="md:hidden">
-              <Button size="icon" variant="ghost">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[280px]">
-              <div className="mt-8 flex flex-col gap-3">
-                {navItems.map((item) => (
+            {/* Mobile Menu Button */}
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild className="lg:hidden">
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <SheetHeader>
+                  <SheetTitle>Menu</SheetTitle>
+                </SheetHeader>
+                <nav className="flex flex-col gap-4 mt-8">
                   <Link
-                    key={item.to}
-                    to={item.to}
+                    to="/"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="rounded-md px-3 py-2 text-sm hover:bg-muted"
+                    className="text-lg hover:text-primary transition-colors"
                   >
-                    {item.label}
+                    Home
                   </Link>
-                ))}
-              </div>
-            </SheetContent>
-          </Sheet>
+                  <div className="pt-1">
+                    <p className="text-base font-semibold text-foreground">About EHRDC</p>
+                    <Link
+                      to="/about"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="mt-2 block text-lg hover:text-primary transition-colors"
+                    >
+                      About Us
+                    </Link>
+                    <Link
+                      to="/impact"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block text-lg hover:text-primary transition-colors"
+                    >
+                      Impact Dashboard
+                    </Link>
+                    <Link
+                      to="/press-kit"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block text-lg hover:text-primary transition-colors"
+                    >
+                      Press Kit
+                    </Link>
+                    <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Who We Are
+                    </p>
+                    <Link
+                      to="/board-members"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block text-base text-foreground/80 hover:text-primary transition-colors"
+                    >
+                      Board Members
+                    </Link>
+                    <Link
+                      to="/staff"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block text-base text-foreground/80 hover:text-primary transition-colors"
+                    >
+                      Staff
+                    </Link>
+                    <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      What We Do
+                    </p>
+                    <Link
+                      to="/capacity-building"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block text-base text-foreground/80 hover:text-primary transition-colors"
+                    >
+                      Capacity Building
+                    </Link>
+                    <Link
+                      to="/advocacy"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block text-base text-foreground/80 hover:text-primary transition-colors"
+                    >
+                      Advocacy
+                    </Link>
+                    <Link
+                      to="/protection"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block text-base text-foreground/80 hover:text-primary transition-colors"
+                    >
+                      Protection
+                    </Link>
+                  </div>
+                  <Link
+                    to="/campaigns"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg hover:text-primary transition-colors"
+                  >
+                    Campaigns
+                  </Link>
+                  <Link
+                    to="/news"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg hover:text-primary transition-colors"
+                  >
+                    News & Updates
+                  </Link>
+                  <Link
+                    to="/events"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg hover:text-primary transition-colors"
+                  >
+                    Events
+                  </Link>
+                  <Link
+                    to="/violence-reporting-map"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg hover:text-primary transition-colors"
+                  >
+                    Reports Map
+                  </Link>
+                  <Link
+                    to="/publications"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg hover:text-primary transition-colors"
+                  >
+                    Publications
+                  </Link>
+                  <Link
+                    to="/blog"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg hover:text-primary transition-colors"
+                  >
+                    Blog & Stories
+                  </Link>
+                  <Link
+                    to="/gallery"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg hover:text-primary transition-colors"
+                  >
+                    Gallery
+                  </Link>
+                  <Link
+                    to="/jobs"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg hover:text-primary transition-colors"
+                  >
+                    Jobs
+                  </Link>
+                  <div className="flex flex-col gap-2 mt-4 pt-4 border-t">
+                    <Link to="/join" onClick={() => setMobileMenuOpen(false)}>
+                      <Button variant="outline" className="w-full border-secondary text-secondary">
+                        Join Us
+                      </Button>
+                    </Link>
+                    <Link to="/report-case" onClick={() => setMobileMenuOpen(false)}>
+                      <Button className="w-full bg-primary hover:bg-primary/90">
+                        Report Case
+                      </Button>
+                    </Link>
+                  </div>
+                </nav>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </header>
 
-      <main className="min-h-[calc(100vh-16rem)]">
+      {/* Main Content */}
+      <main>
         <Outlet />
       </main>
 
-      <footer className="border-t bg-white">
-        <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-6 px-4 py-8 md:px-6">
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            <div className="flex items-center gap-3">
-              <img src="/assets/logo.png" alt="EHRDC" className="h-10 w-10 rounded-full object-cover" />
-              <p className="text-sm text-muted-foreground">Protecting rights, documenting violations, and building accountability.</p>
+      {/* Footer */}
+      <footer className="bg-foreground text-white mt-20">
+        <div className="container mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div>
+              <div className="mb-4 flex items-center gap-2">
+                <img src={logo} alt="EHRDC logo" className="h-10 w-10 rounded-full border border-white/30 object-cover" />
+                <h3>EHRDC</h3>
+              </div>
+              <h3 className="mb-4">About</h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link to="/about" className="text-gray-300 hover:text-white transition-colors">
+                    About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/impact" className="text-gray-300 hover:text-white transition-colors">
+                    Impact Dashboard
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/press-kit" className="text-gray-300 hover:text-white transition-colors">
+                    Press Kit
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/contact" className="text-gray-300 hover:text-white transition-colors">
+                    Contact Us
+                  </Link>
+                </li>
+              </ul>
             </div>
-            <div className="flex items-center gap-4 text-sm">
-              {navItems.map((item) => (
-                <Link key={item.to} to={item.to} className="text-muted-foreground transition-colors hover:text-primary">
-                  {item.label}
-                </Link>
-              ))}
+
+            <div>
+              <h3 className="mb-4">Get Involved</h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link to="/join" className="text-gray-300 hover:text-white transition-colors">
+                    Join Us
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/campaigns" className="text-gray-300 hover:text-white transition-colors">
+                    Campaigns
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/report-case" className="text-gray-300 hover:text-white transition-colors">
+                    Report a Case
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/jobs" className="text-gray-300 hover:text-white transition-colors">
+                    Jobs & Opportunities
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="mb-4">Resources</h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link to="/news" className="text-gray-300 hover:text-white transition-colors">
+                    News & Updates
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/events" className="text-gray-300 hover:text-white transition-colors">
+                    Events
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/publications" className="text-gray-300 hover:text-white transition-colors">
+                    Publications
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/blog" className="text-gray-300 hover:text-white transition-colors">
+                    Blog & Stories
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="mb-4">Connect</h3>
+              <p className="text-gray-300 mb-4">
+                Stay updated with our latest news and campaigns
+              </p>
+              <div className="flex flex-col gap-2">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="px-4 py-2 rounded-md text-foreground"
+                />
+                <Button className="bg-primary hover:bg-primary/90">
+                  Subscribe
+                </Button>
+              </div>
             </div>
           </div>
-          <p className="text-center text-xs text-muted-foreground">© 2026 Ethiopian Human Rights Defenders Center (EHRDC). All rights reserved.</p>
+
+          <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
+            <p>&copy; 2026 Human Rights Commission. All rights reserved.</p>
+          </div>
         </div>
       </footer>
     </div>

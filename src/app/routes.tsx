@@ -17,6 +17,12 @@ import { Jobs } from "./pages/Jobs";
 import { PressKit } from "./pages/PressKit";
 import { Contact } from "./pages/Contact";
 import { NotFound } from "./pages/NotFound";
+import { ViolenceReportingMap } from "./pages/ViolenceReportingMap";
+import { BoardMembers } from "./pages/BoardMembers";
+import { Staff } from "./pages/Staff";
+import { CapacityBuilding } from "./pages/CapacityBuilding";
+import { Advocacy } from "./pages/Advocacy";
+import { Protection } from "./pages/Protection";
 
 export const router = createBrowserRouter([
   {
@@ -39,6 +45,12 @@ export const router = createBrowserRouter([
       { path: "jobs", Component: Jobs },
       { path: "press-kit", Component: PressKit },
       { path: "contact", Component: Contact },
+      { path: "violence-reporting-map", Component: ViolenceReportingMap },
+      { path: "board-members", Component: BoardMembers },
+      { path: "staff", Component: Staff },
+      { path: "capacity-building", Component: CapacityBuilding },
+      { path: "advocacy", Component: Advocacy },
+      { path: "protection", Component: Protection },
       { path: "*", Component: NotFound },
     ],
   },
