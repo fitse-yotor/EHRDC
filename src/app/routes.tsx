@@ -14,6 +14,7 @@ import { Blog } from "./pages/Blog";
 import { BlogPost } from "./pages/BlogPost";
 import { About } from "./pages/About";
 import { Jobs } from "./pages/Jobs";
+import { JobDetail } from "./pages/JobDetail";
 import { PressKit } from "./pages/PressKit";
 import { Contact } from "./pages/Contact";
 import { NotFound } from "./pages/NotFound";
@@ -50,6 +51,7 @@ export const router = createBrowserRouter([
       { path: "blog/:id", Component: BlogPost },
       { path: "about", Component: About },
       { path: "jobs", Component: Jobs },
+      { path: "jobs/:id", Component: JobDetail },
       { path: "press-kit", Component: PressKit },
       { path: "contact", Component: Contact },
       { path: "violence-reporting-map", Component: ViolenceReportingMap },

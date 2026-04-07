@@ -1,6 +1,6 @@
 import { Outlet, Link, useLocation } from "react-router";
 import { Button } from "./ui/button";
-import { Menu } from "lucide-react";
+import { ChevronDown, Menu } from "lucide-react";
 import { useState } from "react";
 import {
   Sheet,
@@ -21,9 +21,18 @@ import logo from "../../../assets/logo.png";
 
 export function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSections, setMobileSections] = useState({
+    about: false,
+    programs: false,
+    publication: false,
+    resources: false,
+  });
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
+  const toggleMobileSection = (key: keyof typeof mobileSections) => {
+    setMobileSections((current) => ({ ...current, [key]: !current[key] }));
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -244,6 +253,19 @@ export function Layout() {
                       </NavigationMenuLink>
                     </Link>
                   </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <Link to="/contact">
+                      <NavigationMenuLink
+                        className={`px-4 py-2 rounded-md transition-colors ${
+                          isActive("/contact")
+                            ? "bg-primary/10 text-primary"
+                            : "text-foreground hover:bg-muted"
+                        }`}
+                      >
+                        Contact Us
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
                 </NavigationMenuList>
               </NavigationMenu>
 
@@ -271,97 +293,92 @@ export function Layout() {
                   <SheetTitle>Menu</SheetTitle>
                 </SheetHeader>
                 <nav className="mt-8 space-y-5">
-                  <Link
-                    to="/"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block text-lg hover:text-primary transition-colors"
-                  >
-                    Home
-                  </Link>
                   <div className="rounded-lg border bg-muted/30 p-3">
-                    <p className="mb-2 text-base font-semibold text-foreground">About EHRDC</p>
                     <Link
-                      to="/about"
+                      to="/"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block py-1 text-base hover:text-primary transition-colors"
+                      className="block text-base font-semibold hover:text-primary transition-colors"
                     >
-                      About Us
-                    </Link>
-                    <Link
-                      to="/impact"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block py-1 text-base hover:text-primary transition-colors"
-                    >
-                      Impact Dashboard
-                    </Link>
-                    <Link
-                      to="/press-kit"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block py-1 text-base hover:text-primary transition-colors"
-                    >
-                      Press Kit
-                    </Link>
-                    <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      Who We Are
-                    </p>
-                    <Link
-                      to="/board-members"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors"
-                    >
-                      Board Members
-                    </Link>
-                    <Link
-                      to="/staff"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors"
-                    >
-                      Staff
-                    </Link>
-                    <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      What We Do
-                    </p>
-                    <Link
-                      to="/capacity-building"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors"
-                    >
-                      Capacity Building
-                    </Link>
-                    <Link
-                      to="/advocacy"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors"
-                    >
-                      Advocacy
-                    </Link>
-                    <Link
-                      to="/protection"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors"
-                    >
-                      Protection
+                      Home
                     </Link>
                   </div>
                   <div className="rounded-lg border bg-muted/30 p-3">
-                    <p className="mb-2 text-base font-semibold text-foreground">Programs</p>
-                    <Link to="/campaigns" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Campaigns</Link>
-                    <Link to="/events" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Events</Link>
-                    <Link to="/violence-reporting-map" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Reports Map</Link>
-                    <Link to="/gallery" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Gallery</Link>
-                    <Link to="/jobs" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Jobs</Link>
+                    <button
+                      type="button"
+                      onClick={() => toggleMobileSection("about")}
+                      className="flex w-full items-center justify-between text-base font-semibold text-foreground"
+                    >
+                      About EHRDC
+                      <ChevronDown className={`h-4 w-4 transition-transform ${mobileSections.about ? "rotate-180" : ""}`} />
+                    </button>
+                    {mobileSections.about && (
+                      <>
+                        <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">About Us</Link>
+                        <Link to="/impact" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Impact Dashboard</Link>
+                        <Link to="/press-kit" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Press Kit</Link>
+                        <p className="mt-3 py-1 text-sm text-foreground/80">Who We Are</p>
+                        <Link to="/board-members" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors">Board Members</Link>
+                        <Link to="/staff" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors">Staff</Link>
+                        <p className="mt-3 py-1 text-sm text-foreground/80">What We Do</p>
+                        <Link to="/capacity-building" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors">Capacity Building</Link>
+                        <Link to="/advocacy" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors">Advocacy</Link>
+                        <Link to="/protection" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors">Protection</Link>
+                      </>
+                    )}
                   </div>
                   <div className="rounded-lg border bg-muted/30 p-3">
-                    <p className="mb-2 text-base font-semibold text-foreground">Publication</p>
-                    <Link to="/publications" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Publications Library</Link>
-                    <Link to="/research-papers" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors">Research Papers</Link>
-                    <Link to="/statistics" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors">Statistics</Link>
-                    <Link to="/annual-reports" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors">Annual Reports</Link>
+                    <button
+                      type="button"
+                      onClick={() => toggleMobileSection("programs")}
+                      className="flex w-full items-center justify-between text-base font-semibold text-foreground"
+                    >
+                      Programs
+                      <ChevronDown className={`h-4 w-4 transition-transform ${mobileSections.programs ? "rotate-180" : ""}`} />
+                    </button>
+                    {mobileSections.programs && (
+                      <>
+                        <Link to="/campaigns" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Campaigns</Link>
+                        <Link to="/events" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Events</Link>
+                        <Link to="/violence-reporting-map" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Reports Map</Link>
+                        <Link to="/gallery" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Gallery</Link>
+                        <Link to="/jobs" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Jobs</Link>
+                        <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Contact Us</Link>
+                      </>
+                    )}
                   </div>
                   <div className="rounded-lg border bg-muted/30 p-3">
-                    <p className="mb-2 text-base font-semibold text-foreground">Resources</p>
-                    <Link to="/news" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">News & Updates</Link>
-                    <Link to="/blog" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Blog & Stories</Link>
+                    <button
+                      type="button"
+                      onClick={() => toggleMobileSection("publication")}
+                      className="flex w-full items-center justify-between text-base font-semibold text-foreground"
+                    >
+                      Publication
+                      <ChevronDown className={`h-4 w-4 transition-transform ${mobileSections.publication ? "rotate-180" : ""}`} />
+                    </button>
+                    {mobileSections.publication && (
+                      <>
+                        <Link to="/publications" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Publications Library</Link>
+                        <Link to="/research-papers" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors">Research Papers</Link>
+                        <Link to="/statistics" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors">Statistics</Link>
+                        <Link to="/annual-reports" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-sm text-foreground/80 hover:text-primary transition-colors">Annual Reports</Link>
+                      </>
+                    )}
+                  </div>
+                  <div className="rounded-lg border bg-muted/30 p-3">
+                    <button
+                      type="button"
+                      onClick={() => toggleMobileSection("resources")}
+                      className="flex w-full items-center justify-between text-base font-semibold text-foreground"
+                    >
+                      Resources
+                      <ChevronDown className={`h-4 w-4 transition-transform ${mobileSections.resources ? "rotate-180" : ""}`} />
+                    </button>
+                    {mobileSections.resources && (
+                      <>
+                        <Link to="/news" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">News & Updates</Link>
+                        <Link to="/blog" onClick={() => setMobileMenuOpen(false)} className="block py-1 text-base hover:text-primary transition-colors">Blog & Stories</Link>
+                      </>
+                    )}
                   </div>
                   <div className="flex flex-col gap-2 mt-4 pt-4 border-t">
                     <Link to="/join" onClick={() => setMobileMenuOpen(false)}>

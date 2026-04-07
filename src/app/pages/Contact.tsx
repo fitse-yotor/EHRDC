@@ -58,9 +58,7 @@ export function Contact() {
                   <div>
                     <h4 className="mb-1">Phone</h4>
                     <p className="text-sm text-muted-foreground">
-                      Main: +251-XXX-XXXX
-                      <br />
-                      Hotline: +251-YYY-YYYY
+                      Main: +251(9)88810877
                     </p>
                   </div>
                 </div>
@@ -70,20 +68,11 @@ export function Contact() {
                   <div>
                     <h4 className="mb-1">Email</h4>
                     <p className="text-sm text-muted-foreground">
-                      General:{" "}
                       <a
-                        href="mailto:info@humanrights.org"
+                        href="mailto:EHRDCenter@ethdefenders.org"
                         className="text-primary hover:underline"
                       >
-                        info@humanrights.org
-                      </a>
-                      <br />
-                      Press:{" "}
-                      <a
-                        href="mailto:press@humanrights.org"
-                        className="text-primary hover:underline"
-                      >
-                        press@humanrights.org
+                        EHRDCenter@ethdefenders.org
                       </a>
                     </p>
                   </div>
@@ -212,22 +201,14 @@ export function Contact() {
             {/* Map Placeholder */}
             <Card className="mt-6">
               <CardContent className="pt-6">
-                <div className="rounded-lg border border-primary/10 bg-muted p-6">
-                  <div className="text-center text-muted-foreground">
-                    <MapPin className="mx-auto mb-2 h-12 w-12 text-primary" />
-                    <p className="mb-2 text-foreground">EHRDC Office Location</p>
-                    <p className="text-sm">
-                      Bole Road, Friendship Business Center, 5th Floor, Office 504/2
-                    </p>
-                    <a
-                      href="https://maps.app.goo.gl/wfeAg9r45hr6eRPB8"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="mt-3 inline-block text-sm text-primary hover:underline"
-                    >
-                      View on Google Maps
-                    </a>
-                  </div>
+                <div className="overflow-hidden rounded-lg border border-primary/10">
+                  <iframe
+                    title="EHRDC office map"
+                    src="https://www.google.com/maps?q=Friendship+Business+Center+5th+Floor+Addis+Ababa+Ethiopia&output=embed"
+                    className="h-72 w-full"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
                 </div>
               </CardContent>
             </Card>
