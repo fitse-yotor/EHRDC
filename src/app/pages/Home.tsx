@@ -1,312 +1,385 @@
-import { Link } from "react-router";
+import { useEffect, useMemo, useState } from "react";
+import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from "react-leaflet";
+import { divIcon, type LeafletMouseEvent } from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { Menu, X } from "lucide-react";
+import { toast } from "sonner";
+import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
-import {
-  AlertCircle,
-  Users,
-  BookOpen,
-  Calendar,
-  Shield,
-  TrendingUp,
-  Heart,
-  FileText,
-} from "lucide-react";
-import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { Card } from "../components/ui/card";
+import { Checkbox } from "../components/ui/checkbox";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../components/ui/dialog";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import { Textarea } from "../components/ui/textarea";
+
+type IncidentStatus = "urgent" | "verified" | "review";
+
+type Incident = {
+  id: number;
+  title: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  location: string;
+  date: string;
+  status: IncidentStatus;
+  caseId?: string;
+};
+
+const mockIncidents: Incident[] = [
+  {
+    id: 1,
+    title: "Unlawful Detention of Journalist",
+    description: "A journalist was detained without a warrant while reporting on a protest.",
+    latitude: 9.03,
+    longitude: 38.74,
+    location: "Addis Ababa",
+    date: "2026-03-12",
+    status: "urgent",
+  },
+  {
+    id: 2,
+    title: "Use of Excessive Force",
+    description: "Security forces used excessive force during a peaceful demonstration.",
+    latitude: 11.6,
+    longitude: 37.39,
+    location: "Bahir Dar",
+    date: "2026-02-25",
+    status: "verified",
+  },
+  {
+    id: 3,
+    title: "Forced Eviction Case",
+    description: "Residents were evicted without prior notice or compensation.",
+    latitude: 7.67,
+    longitude: 36.83,
+    location: "Jimma",
+    date: "2026-01-18",
+    status: "review",
+  },
+  {
+    id: 4,
+    title: "Violation of Freedom of Speech",
+    description: "Individual arrested for expressing political views online.",
+    latitude: 13.5,
+    longitude: 39.47,
+    location: "Mekelle",
+    date: "2026-03-01",
+    status: "urgent",
+  },
+];
+
+const statusColor: Record<IncidentStatus, string> = {
+  urgent: "#C62828",
+  verified: "#1976D2",
+  review: "#FBC02D",
+};
+
+const statusLabel: Record<IncidentStatus, string> = {
+  urgent: "Urgent",
+  verified: "Verified",
+  review: "Under Review",
+};
+
+const statusBadgeClass: Record<IncidentStatus, string> = {
+  urgent: "bg-[#C62828]/10 text-[#C62828] border-[#C62828]/30",
+  verified: "bg-[#1976D2]/10 text-[#1976D2] border-[#1976D2]/30",
+  review: "bg-[#FBC02D]/20 text-[#8A6D00] border-[#FBC02D]/30",
+};
+
+function markerIcon(status: IncidentStatus, active: boolean) {
+  const size = active ? 20 : 16;
+  return divIcon({
+    className: "",
+    html: `<div style="width:${size}px;height:${size}px;background:${statusColor[status]};border:3px solid white;border-radius:9999px;box-shadow:0 0 0 ${active ? 5 : 0}px rgba(198,40,40,0.25);"></div>`,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+  });
+}
+
+function FocusMap({ lat, lng }: { lat: number; lng: number }) {
+  const map = useMap();
+  useEffect(() => {
+    map.flyTo([lat, lng], Math.max(map.getZoom(), 7), { duration: 0.8 });
+  }, [lat, lng, map]);
+  return null;
+}
+
+function MapClickCapture({ onMapClick }: { onMapClick: (e: LeafletMouseEvent) => void }) {
+  useMapEvents({
+    click: onMapClick,
+  });
+  return null;
+}
+
+function toCaseId(id: number) {
+  return `EHRDC-2026-${String(id).padStart(4, "0")}`;
+}
 
 export function Home() {
+  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeIncidentId, setActiveIncidentId] = useState<number | null>(null);
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [regionFilter, setRegionFilter] = useState("all");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [detailsIncident, setDetailsIncident] = useState<Incident | null>(null);
+  const [tempPoint, setTempPoint] = useState<{ lat: number; lng: number } | null>(null);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    location: "",
+    date: new Date().toISOString().slice(0, 10),
+    anonymous: false,
+    evidence: "",
+  });
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setIncidents(mockIncidents.map((item) => ({ ...item, caseId: toCaseId(item.id) })));
+      setActiveIncidentId(1);
+      setIsLoading(false);
+    }, 900);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const regions = useMemo(
+    () => ["all", ...Array.from(new Set(incidents.map((item) => item.location)))],
+    [incidents],
+  );
+
+  const filteredIncidents = useMemo(() => {
+    return incidents.filter((item) => {
+      const statusMatch = statusFilter === "all" || item.status === statusFilter;
+      const regionMatch = regionFilter === "all" || item.location === regionFilter;
+      return statusMatch && regionMatch;
+    });
+  }, [incidents, regionFilter, statusFilter]);
+
+  const activeIncident =
+    filteredIncidents.find((incident) => incident.id === activeIncidentId) ?? filteredIncidents[0];
+
+  const onMapClick = (e: LeafletMouseEvent) => {
+    const lat = Number(e.latlng.lat.toFixed(5));
+    const lng = Number(e.latlng.lng.toFixed(5));
+    setTempPoint({ lat, lng });
+    setFormData((prev) => ({ ...prev, location: `${lat}, ${lng}` }));
+    setReportOpen(true);
+  };
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    const newId = incidents.length + 1;
+    const newIncident: Incident = {
+      id: newId,
+      title: formData.title || "Untitled Incident",
+      description: formData.description || "No description provided.",
+      latitude: tempPoint?.lat ?? 9.03,
+      longitude: tempPoint?.lng ?? 38.74,
+      location: formData.location || "Unknown location",
+      date: formData.date,
+      status: "review",
+      caseId: toCaseId(newId),
+    };
+    setIncidents((prev) => [newIncident, ...prev]);
+    setActiveIncidentId(newId);
+    setReportOpen(false);
+    setFormData({
+      title: "",
+      description: "",
+      location: "",
+      date: new Date().toISOString().slice(0, 10),
+      anonymous: false,
+      evidence: "",
+    });
+    setTempPoint(null);
+    toast.success(`Report submitted successfully (${newIncident.caseId})`);
+  };
+
   return (
-    <div className="flex flex-col">
-      {/* Hero Section */}
-      <section className="relative h-[600px] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50 z-10" />
-        <ImageWithFallback
-          src="https://images.unsplash.com/photo-1641057324798-c05769de628a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaXZlcnNlJTIwcGVvcGxlJTIwaGFuZHMlMjB0b2dldGhlciUyMHNvbGlkYXJpdHl8ZW58MXx8fHwxNzc1NTQ2NDI0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-          alt="Human Rights"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="container mx-auto px-4 z-20 text-center text-white">
-          <h1 className="text-5xl md:text-6xl mb-6 text-white">
-            Defending Human Rights for All
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-white">
-            We stand for justice, equality, and dignity. Together, we can create a world
-            where every person's rights are protected and respected.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/report-case">
-              <Button size="lg" className="bg-primary hover:bg-primary/90">
-                <AlertCircle className="mr-2 h-5 w-5" />
-                Report a Case
-              </Button>
-            </Link>
-            <Link to="/join">
-              <Button
-                size="lg"
-                variant="outline"
-                className="bg-white text-foreground hover:bg-white/90"
-              >
-                <Users className="mr-2 h-5 w-5" />
-                Join the Movement
-              </Button>
-            </Link>
+    <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-4 py-4 md:px-6">
+      <section className="rounded-xl border bg-white p-4 shadow-sm">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h1 className="font-['Montserrat',_sans-serif] text-2xl font-semibold">Interactive Violence Reporting Map</h1>
+            <p className="font-['Inter',_sans-serif] text-sm text-muted-foreground">Track incidents, verify reports, and submit new violations in no-backend mode.</p>
           </div>
-        </div>
-      </section>
-
-      {/* Urgent Alerts */}
-      <section className="bg-primary text-white py-4">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <AlertCircle className="h-6 w-6" />
-              <span className="text-white">
-                <strong>URGENT:</strong> Join our campaign to protect freedom of expression
-              </span>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="w-full min-w-[180px] md:w-auto">
+              <Label className="mb-1 block text-xs text-muted-foreground">Status</Label>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="verified">Verified</SelectItem>
+                  <SelectItem value="urgent">Urgent</SelectItem>
+                  <SelectItem value="review">Under Review</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <Link to="/campaigns">
-              <Button variant="outline" className="bg-white text-primary hover:bg-white/90 border-white">
-                Learn More
-              </Button>
-            </Link>
+            <div className="w-full min-w-[180px] md:w-auto">
+              <Label className="mb-1 block text-xs text-muted-foreground">Region</Label>
+              <Select value={regionFilter} onValueChange={setRegionFilter}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {regions.map((region) => (
+                    <SelectItem key={region} value={region}>
+                      {region === "all" ? "All Regions" : region}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Button
+              variant="outline"
+              className="md:hidden"
+              onClick={() => setIsSidebarOpen((prev) => !prev)}
+            >
+              {isSidebarOpen ? <X className="mr-2 h-4 w-4" /> : <Menu className="mr-2 h-4 w-4" />}
+              Incidents
+            </Button>
           </div>
         </div>
       </section>
 
-      {/* Statistics Section */}
-      <section className="py-16 bg-muted">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <div className="text-4xl text-primary mb-2">2,500+</div>
-                <div className="text-muted-foreground">Cases Handled</div>
-              </CardContent>
-            </Card>
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <div className="text-4xl text-secondary mb-2">15,000+</div>
-                <div className="text-muted-foreground">People Supported</div>
-              </CardContent>
-            </Card>
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <div className="text-4xl text-primary mb-2">12</div>
-                <div className="text-muted-foreground">Regions Covered</div>
-              </CardContent>
-            </Card>
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <div className="text-4xl text-secondary mb-2">50+</div>
-                <div className="text-muted-foreground">Active Campaigns</div>
-              </CardContent>
-            </Card>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[340px_1fr]">
+        <aside className={`${isSidebarOpen ? "block" : "hidden"} rounded-xl border bg-white shadow-sm lg:block`}>
+          <div className="border-b p-4">
+            <h2 className="font-['Montserrat',_sans-serif] text-lg font-semibold">Reported Incidents</h2>
+            <p className="text-xs text-muted-foreground">{filteredIncidents.length} results</p>
           </div>
-        </div>
-      </section>
-
-      {/* Main Features */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl mb-4">How We Work</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Our comprehensive approach to defending and promoting human rights across all
-              communities
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card>
-              <CardHeader>
-                <Shield className="h-12 w-12 text-primary mb-4" />
-                <CardTitle>Case Advocacy</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  We provide legal support and advocacy for victims of human rights
-                  violations, ensuring justice is served.
-                </p>
-                <Link to="/report-case">
-                  <Button variant="link" className="p-0 text-primary">
-                    Report a Case →
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <Users className="h-12 w-12 text-secondary mb-4" />
-                <CardTitle>Community Engagement</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  Building strong communities through education, training, and
-                  collaborative initiatives.
-                </p>
-                <Link to="/events">
-                  <Button variant="link" className="p-0 text-secondary">
-                    View Events →
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <BookOpen className="h-12 w-12 text-primary mb-4" />
-                <CardTitle>Research & Publications</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  Comprehensive reports and research on human rights issues to inform
-                  policy and public discourse.
-                </p>
-                <Link to="/publications">
-                  <Button variant="link" className="p-0 text-primary">
-                    View Publications →
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <Heart className="h-12 w-12 text-secondary mb-4" />
-                <CardTitle>Campaigns</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  Powerful advocacy campaigns driving real change in laws, policies, and
-                  public attitudes.
-                </p>
-                <Link to="/campaigns">
-                  <Button variant="link" className="p-0 text-secondary">
-                    Active Campaigns →
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <TrendingUp className="h-12 w-12 text-primary mb-4" />
-                <CardTitle>Impact Tracking</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  Transparent reporting on our achievements and the real-world impact of
-                  our work.
-                </p>
-                <Link to="/impact">
-                  <Button variant="link" className="p-0 text-primary">
-                    View Impact →
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <FileText className="h-12 w-12 text-secondary mb-4" />
-                <CardTitle>Policy Advocacy</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  Working with governments and institutions to create and strengthen
-                  human rights protections.
-                </p>
-                <Link to="/about">
-                  <Button variant="link" className="p-0 text-secondary">
-                    Learn More →
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Latest News */}
-      <section className="py-16 bg-muted">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-4xl">Latest News</h2>
-            <Link to="/news">
-              <Button variant="outline">View All News</Button>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "New Report: State of Human Rights 2026",
-                date: "April 5, 2026",
-                excerpt:
-                  "Our comprehensive annual report highlights progress and challenges in human rights protection...",
-              },
-              {
-                title: "Campaign Victory: Education Access Expanded",
-                date: "April 3, 2026",
-                excerpt:
-                  "After 6 months of advocacy, new legislation ensures education access for all children...",
-              },
-              {
-                title: "Upcoming: Regional Human Rights Summit",
-                date: "April 1, 2026",
-                excerpt:
-                  "Join us for a three-day summit bringing together activists, policymakers, and communities...",
-              },
-            ].map((news, index) => (
-              <Card key={index}>
-                <CardHeader>
-                  <div className="text-sm text-muted-foreground mb-2">{news.date}</div>
-                  <CardTitle className="text-xl">{news.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-4">{news.excerpt}</p>
-                  <Link to="/news">
-                    <Button variant="link" className="p-0 text-primary">
-                      Read More →
-                    </Button>
-                  </Link>
-                </CardContent>
+          <div className="max-h-[65vh] space-y-2 overflow-y-auto p-3">
+            {filteredIncidents.map((incident) => (
+              <Card
+                key={incident.id}
+                onClick={() => {
+                  setActiveIncidentId(incident.id);
+                  setIsSidebarOpen(false);
+                }}
+                className={`cursor-pointer p-3 transition hover:shadow-md ${activeIncidentId === incident.id ? "ring-2 ring-primary/35" : ""}`}
+              >
+                <h3 className="mb-1 text-sm font-semibold">{incident.title}</h3>
+                <p className="text-xs text-muted-foreground">{incident.location} • {incident.date}</p>
+                <Badge className={`mt-2 border ${statusBadgeClass[incident.status]}`}>{statusLabel[incident.status]}</Badge>
               </Card>
             ))}
           </div>
-        </div>
-      </section>
+        </aside>
 
-      {/* Call to Action */}
-      <section className="py-16 bg-primary text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl mb-6 text-white">Be Part of the Change</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto text-white">
-            Your support helps us continue our vital work protecting human rights and
-            fighting injustice. Join us today.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/join">
-              <Button
-                size="lg"
-                variant="outline"
-                className="bg-white text-primary hover:bg-white/90 border-white"
-              >
-                Become a Member
-              </Button>
-            </Link>
-            <Link to="/campaigns">
-              <Button
-                size="lg"
-                variant="outline"
-                className="bg-transparent text-white hover:bg-white/10 border-white"
-              >
-                Support a Campaign
-              </Button>
-            </Link>
+        <section className="relative overflow-hidden rounded-xl border bg-white shadow-sm">
+          <div className="flex items-center justify-between border-b p-3 text-xs">
+            <div className="flex items-center gap-4">
+              <span className="inline-flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-[#C62828]" />Urgent/Unverified</span>
+              <span className="inline-flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-[#1976D2]" />Verified</span>
+              <span className="inline-flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-[#FBC02D]" />Under Review</span>
+            </div>
+            <p className="hidden text-muted-foreground md:block">Click map to pre-fill report location</p>
           </div>
-        </div>
-      </section>
+          {isLoading ? (
+            <div className="flex h-[70vh] items-center justify-center bg-muted/50">
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary/25 border-t-primary" />
+            </div>
+          ) : (
+            <MapContainer center={[9.145, 40.4897]} zoom={6} className="h-[70vh] w-full">
+              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap contributors" />
+              <MapClickCapture onMapClick={onMapClick} />
+              {activeIncident && <FocusMap lat={activeIncident.latitude} lng={activeIncident.longitude} />}
+              {filteredIncidents.map((incident) => (
+                <Marker
+                  key={incident.id}
+                  position={[incident.latitude, incident.longitude]}
+                  icon={markerIcon(incident.status, incident.id === activeIncidentId)}
+                  eventHandlers={{ click: () => setActiveIncidentId(incident.id) }}
+                >
+                  <Popup>
+                    <div className="min-w-[220px] space-y-2">
+                      <h3 className="font-semibold">{incident.title}</h3>
+                      <p className="text-xs text-muted-foreground">{incident.description}</p>
+                      <p className="text-xs"><strong>Location:</strong> {incident.location}</p>
+                      <p className="text-xs"><strong>Date:</strong> {incident.date}</p>
+                      <Button size="sm" className="h-8 w-full bg-primary hover:bg-primary/90" onClick={() => setDetailsIncident(incident)}>
+                        View Details
+                      </Button>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+              {tempPoint && (
+                <Marker
+                  position={[tempPoint.lat, tempPoint.lng]}
+                  icon={divIcon({ className: "", html: '<div style="width:14px;height:14px;background:#111827;border:2px solid white;border-radius:9999px;"></div>' })}
+                />
+              )}
+            </MapContainer>
+          )}
+        </section>
+      </div>
+
+      <Button
+        className="fixed right-5 bottom-6 z-[900] rounded-full bg-primary px-6 py-6 text-white shadow-xl hover:bg-primary/90"
+        onClick={() => setReportOpen(true)}
+      >
+        Report a Violation
+      </Button>
+
+      <Dialog open={reportOpen} onOpenChange={setReportOpen}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[640px]">
+          <DialogHeader>
+            <DialogTitle>Report a Violation</DialogTitle>
+            <DialogDescription>Submit a new case in local no-backend mode. A case ID is generated automatically.</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid gap-2">
+              <Label htmlFor="title">Incident title</Label>
+              <Input id="title" value={formData.title} onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))} required />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea id="description" rows={4} value={formData.description} onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))} required />
+            </div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="grid gap-2">
+                <Label htmlFor="location">Location</Label>
+                <Input id="location" value={formData.location} onChange={(e) => setFormData((prev) => ({ ...prev, location: e.target.value }))} placeholder="Click map or type region/city" required />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="date">Date</Label>
+                <Input id="date" type="date" value={formData.date} onChange={(e) => setFormData((prev) => ({ ...prev, date: e.target.value }))} required />
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="evidence">Upload evidence</Label>
+              <Input id="evidence" type="file" onChange={(e) => setFormData((prev) => ({ ...prev, evidence: e.target.files?.[0]?.name ?? "" }))} />
+            </div>
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="anonymous"
+                checked={formData.anonymous}
+                onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, anonymous: Boolean(checked) }))}
+              />
+              <Label htmlFor="anonymous" className="text-sm">Submit anonymously</Label>
+            </div>
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90">Submit Report</Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={Boolean(detailsIncident)} onOpenChange={() => setDetailsIncident(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{detailsIncident?.title}</DialogTitle>
+            <DialogDescription>{detailsIncident?.caseId}</DialogDescription>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">{detailsIncident?.description}</p>
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <p><strong>Location:</strong> {detailsIncident?.location}</p>
+            <p><strong>Date:</strong> {detailsIncident?.date}</p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
